@@ -2,7 +2,7 @@
 
 window.onload = function () {
     google.accounts.id.initialize({
-        client_id: 'api',
+        client_id: process.env.gApi_key,
         callback: handleCredentialResponse
     });
     const parent = document.getElementById('google_btn');
