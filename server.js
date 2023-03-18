@@ -1,6 +1,13 @@
 const express = require('express');
 const { getData } = require('./database');
 const app = express();
+const path = require('path');
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + '/index.html'));
+});
 
 app.get('/data', async (req, res) => {
   console.log('GET /data');
