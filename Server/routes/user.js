@@ -12,9 +12,6 @@ router.post('/',(req,res)=>{
     const {idToken}=req.body;
     console.log(idToken);
     if(idToken){
-        authClient.verifyIdToken({idToken,audience:client_id}).then(response=>{
-            console.log(response);
-        })
         const{email_verified,email,name,picture}=response.payload;
         if(email_verified){
         User.findOne({email}).exec((err,user)=>{
