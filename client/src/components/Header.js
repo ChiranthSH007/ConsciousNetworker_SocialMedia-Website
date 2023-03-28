@@ -10,7 +10,7 @@ export default function Header() {
           withCredentials: true,
         })
         .then((response) => {
-          //console.log(response.data.uname);
+          console.log(response.data.uname);
           setUsername(response.data.uname);
         });
     }
@@ -18,13 +18,7 @@ export default function Header() {
   }, []);
 
   function logout() {
-    axios
-      .post("http://localhost:4000/logout", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        console.log(response);
-      });
+    axios.get("http://localhost:4000/logout", { withCredentials: true });
   }
   return (
     <div>
@@ -44,7 +38,7 @@ export default function Header() {
           </a>
         </li>
         <li id="li1">
-          <button onClick={logout()}>Logout</button>
+          <button onClick={logout}>Logout</button>
         </li>
       </ul>
     </div>
