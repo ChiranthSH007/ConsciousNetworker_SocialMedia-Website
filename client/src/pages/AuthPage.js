@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
+import { SiGithub } from "react-icons/si";
+import { Box, Button, Center, Stack, Text } from "@chakra-ui/react";
 
 export default function AuthPage() {
   const [user, setUser] = useState({}); //make it to global when need to use it ouside
@@ -50,7 +52,7 @@ export default function AuthPage() {
       document.getElementById("googlesigninDiv"),
       {
         theme: "filled_blue",
-        size: "large",
+        width: "500px",
       }
     );
 
@@ -98,21 +100,48 @@ export default function AuthPage() {
     );
   }
   return (
-    <div className="authdiv">
-      <h1>Authentication Page</h1>
-      <div id="googlesigninDiv"></div>
-      {/* {Object.keys(user).length !== 0 && (
-        <button onClick={(e) => handleSignOut(e)}>Signout</button>
-      )}
-      {user && (
-        <div>
-          <img src={user.picture}></img>
-          <h3>{user.name}</h3>
-        </div>
-      )} */}
-      <div className="gitSignindiv">
-        <button onClick={loginwithGithub}>Login with Github</button>
-      </div>
-    </div>
+    <Box>
+      <Center p={8}>
+        <Stack spacing={2} align={"center"} maxW={"md"} w={"full"}>
+          <div id="googlesigninDiv" className="googleButton"></div>
+          {/* Google */}
+          {/* <Button
+            w={"full"}
+            variant={"outline"}
+            leftIcon={<FcGoogle />}
+            onClick={handleCallbackResponse}
+          >
+            <Center>
+              <Text>Sign in with Google</Text>
+            </Center>
+          </Button> */}
+          {/* Messenger */}
+          <Button
+            w={"full"}
+            onClick={loginwithGithub}
+            colorScheme={"gray"}
+            leftIcon={<SiGithub />}
+          >
+            <Text>Send to Github</Text>
+          </Button>
+        </Stack>
+      </Center>
+    </Box>
+    // <div className="authdiv">
+    //   <h1>Authentication Page</h1>
+    //   <div id="googlesigninDiv"></div>
+    //   {/* {Object.keys(user).length !== 0 && (
+    //     <button onClick={(e) => handleSignOut(e)}>Signout</button>
+    //   )}
+    //   {user && (
+    //     <div>
+    //       <img src={user.picture}></img>
+    //       <h3>{user.name}</h3>
+    //     </div>
+    //   )} */}
+    //   <div className="gitSignindiv">
+    //     <button onClick={loginwithGithub}>Login with Github</button>
+    //   </div>
+    // </div>
   );
 }

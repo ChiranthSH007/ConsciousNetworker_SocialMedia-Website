@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,400&display=swap");
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,12 +9,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root {
+  /* fonts */
+  --font-poppins: Poppins;
+
+  /* font sizes */
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+
+  /* Colors */
+  --default-white: #fff;
+  --color-black: #000;
+
+  /* Gaps */
+  --gap-946xl: 965px;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
-
+/* 
 ul {
   list-style-type: none;
   margin: 0;
@@ -43,21 +61,39 @@ li a:hover:not(.active) {
 
 #li1{
   float:right;
-}
+} */
 
-img{
-  height:8%;
-  width: 50%;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
-.posts {
+
+/* .posts {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0% 5% 1% 5%;
+} */
+.bgColor{
+  background-color: #f2f3f8;
 }
+.Event,.Eventdetails,.eventdetailsname,.Posts,.introln1,.introln2{
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-top: 1%;
+  border: 1px  black;
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+}
+
+
+.event-registration-form,.eventdisplayform,.eventdetailsdisplayform,.postuploadform,.intropageln1,.intropageln2{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0%;
+  border: 1px  brown;
+  margin: auto;
+}
+
+  
+
 

@@ -13,19 +13,22 @@ const CLIENT_ID = "daf0a114d4dac5dc9a75";
 const CLIENT_SECRET = "d326a97d875feb179c5f4cd4df76cda5d8b9c9d8";
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" })); //add to avoid CORS error
-app.use(express.json());
+var bodyParser = require("body-parser");
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 const multer = require("multer");
-const uploadMiddleware = multer({ dest: "uploads/" });
 const fs = require("fs");
 const Post = require("./model/NewPost");
+const Events = require("./model/NewEvent");
+
 const postModel = require("./model/NewPost");
 const { response } = require("express");
 
 //const authrouter = require('./routes/user');
 
-app.use("/uploads", express.static(__dirname + "/uploads"));
-app.use(cookieParser());
+// app.use("/uploads", express.static(__dirname + "/uploads"));
+// // app.use(cookieParser());
 
 app.get("/getGitAccessTokenUserdata", async (req, res) => {
   const authname = "GitHub";
@@ -229,26 +232,108 @@ app.get("/profile", (req, res) => {
 
 app.get("/logout", (req, res) => {
   res.clearCookie("token");
-  response.send("Cooke Cleared");
+  res.send("Cooke Cleared");
 });
 
-app.post("/newpost", uploadMiddleware.single("file"), async (req, res) => {
-  const { originalname, path } = req.file;
-  const parts = originalname.split(".");
-  const ext = parts[parts.length - 1];
-  const newPath = path + "." + ext;
-  fs.renameSync(path, newPath);
+// app.post("/newpost", uploadMiddleware.single("file"), async (req, res) => {
+//   const { originalname, path } = req.file;
+//   const parts = originalname.split(".");
+//   const ext = parts[parts.length - 1];
+//   const newPath = path + "." + ext;
+//   fs.renameSync(path, newPath);
 
-  const { userpost } = req.body;
-  const postDoc = await Post.create({
-    userpost,
-    img: newPath,
-  });
-  res.json(postDoc);
+//   const { userpost } = req.body;
+//   const postDoc = await Post.create({
+//     userpost,
+//     img: newPath,
+//   });
+//   res.json(postDoc);
+// });
+
+app.post("/newpost", async (req, res) => {
+  const { title, desc, categ, authorname, authorpic, image } = req.body;
+  try {
+    const postDoc = await Post.create({
+      title: title,
+      description: desc,
+      category: categ,
+      authorname: authorname,
+      authorpic: authorpic,
+      image: image,
+    });
+    postDoc.save();
+    res.json(postDoc);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-app.get("/newpost", async (req, res) => {
+app.get("/getpost", async (req, res) => {
   res.json(await Post.find());
+});
+
+app.post("/newevent", async (req, res) => {
+  const {
+    usereventcategory,
+    usereventduration,
+    userevententryage,
+    usereventlanguage,
+    usereventlean,
+    usereventorgname,
+    usereventname,
+    usereventdescription,
+    usereventlocation,
+    usereventtime,
+    image,
+    usereventorggmail,
+  } = req.body;
+  const eventDoc = await Events.create({
+    usereventname,
+    usereventdescription,
+    usereventlocation,
+    usereventtime,
+    eventimg: image,
+    usereventorggmail,
+    usereventduration,
+    userevententryage,
+    usereventlanguage,
+    usereventlean,
+    usereventorgname,
+    usereventcategory,
+  });
+  res.json(eventDoc);
+});
+app.post("/newregister", async (req, res) => {
+  const { eid, uid } = req.body;
+  const findStat = await Events.findOne({ _id: eid }).findOne({
+    usersregisterd: uid,
+  });
+  if (findStat == null) {
+    const updtaeregDoc = await Events.updateOne(
+      { _id: eid },
+      { $push: { usersregisterd: uid } }
+    );
+    res.json(updtaeregDoc);
+  } else {
+    res.json();
+  }
+});
+app.post("/checkreg", async (req, res) => {
+  const { eid, uid } = req.body;
+  const checkR = await Events.findOne({ _id: eid }).findOne({
+    usersregisterd: uid,
+  });
+  res.json(checkR);
+});
+app.get("/getevent", async (req, res) => {
+  res.json(await Events.find());
+});
+
+// populate should be add or can use cookies
+app.get("/newevent/:id", async (req, res) => {
+  const { id } = req.params;
+  const eventDoc = await Events.findById(id);
+  res.json(eventDoc);
 });
 
 app.listen(4000, function () {
