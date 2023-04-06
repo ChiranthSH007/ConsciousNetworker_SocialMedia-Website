@@ -18,11 +18,14 @@ import {
   Input,
   InputGroup,
   FormControl,
+  Toast,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useState } from "react";
 
 export default function CreateEventDrawer() {
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
   const [files, setfiles] = useState("");
@@ -75,7 +78,14 @@ export default function CreateEventDrawer() {
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
-          console.log("Uploaded New Event");
+          toast({
+            title: "Event Created",
+            description: "We've created new event",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+
           setTimeout(() => {
             onClose();
           }, 5000);
@@ -83,7 +93,13 @@ export default function CreateEventDrawer() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        toast({
+          title: "Error ",
+          description: "Error Uploading new Post",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       });
     //   const resp = await fetch("http://localhost:4000/newpost", {
     //     method: "POST",

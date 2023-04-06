@@ -109,7 +109,7 @@ export default function PageFeed() {
           </GridItem>
           <GridItem colStart={5} colEnd={6}>
             <Stack position={"fixed"}>
-              <Box
+              {/* <Box
                 bg={useColorModeValue("white", "gray.900")}
                 boxShadow={"2xl"}
                 rounded={"md"}
@@ -140,7 +140,7 @@ export default function PageFeed() {
                     <EventTile {...groups} />
                   ))}
                 </div>
-              </Box>
+              </Box> */}
               <Box
                 bg={useColorModeValue("white", "gray.900")}
                 boxShadow={"2xl"}
@@ -164,7 +164,7 @@ export default function PageFeed() {
                 }}
               >
                 <Text color={"gray.600"} fontWeight={"bold"}>
-                  Upcomming Events
+                  Events
                 </Text>
                 <div>
                   {Event.length > 0 &&
@@ -178,3 +178,5 @@ export default function PageFeed() {
     </div>
   );
 }
+// need to split the array of events before going to seperate tiles
+//store the eventids in user collection

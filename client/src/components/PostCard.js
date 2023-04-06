@@ -31,10 +31,11 @@ export default function Post({
           boxShadow={"2xl"}
           rounded={"md"}
           h={"350px"}
+          w={"100%"}
           p={6}
           overflow={"hidden"}
         >
-          <Flex>
+          <Flex w={"100%"}>
             <Box
               h={"300px"}
               w={"300px"}
@@ -44,16 +45,18 @@ export default function Post({
             >
               <Image
                 h={"300px"}
-                w={"300px"}
+                maxW={"300px"}
                 rounded={"md"}
                 src={image}
                 alt="Post-Image"
-                objectFit="fill"
+                objectFit="cover"
+                alignItems="center"
+                mx={"auto"}
               />
             </Box>
-            <Box paddingStart={10}>
-              <Flex gap={28} direction={"column"}>
-                <Stack>
+            <Box w={"100%"} paddingStart={10}>
+              <Flex gap={24} direction={"column"} w={"100%"}>
+                <Stack h={"80%"}>
                   {/* <Text
                     color={"green.500"}
                     textTransform={"uppercase"}
@@ -73,11 +76,8 @@ export default function Post({
                   >
                     {title}
                   </Heading>
-                  <Text color={"gray.500"} noOfLines={4}>
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                    diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat, sed diam voluptua. At vero eos et accusam et
-                    justo duo dolores et ea rebum.
+                  <Text color={"gray.500"} noOfLines={4} h={"90px"}>
+                    {description}
                   </Text>
                 </Stack>
                 <Stack direction={"row"} justify={"space-between"}>

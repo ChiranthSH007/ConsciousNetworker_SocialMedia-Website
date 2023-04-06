@@ -13,6 +13,7 @@ import {
   Image,
   Button,
 } from "@chakra-ui/react";
+import axios from "axios";
 export default function ShowEventDetails() {
   const { id } = useParams();
   const [eventInfo, seteventInfo] = useState(null);
@@ -28,6 +29,19 @@ export default function ShowEventDetails() {
     });
   };
   useEffect(() => {
+    async function fetchData() {
+      await axios
+        .get("http://localhost:4000/profile", {
+          withCredentials: true,
+        })
+        .then((response) => {
+          //setUid(response.data.id);
+        })
+        .catch((err) => {
+          window.location.href = "/auth";
+        });
+    }
+    fetchData();
     //console.log(id);
     fetch(`http://localhost:4000/newevent/${id}`).then((response) => {
       response.json().then((eventInfo) => {

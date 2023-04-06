@@ -22,6 +22,8 @@ import { Navigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
 
 export default function CreatePostDrawer() {
+  const toast = useToast();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
   const [files, setfiles] = useState("");
@@ -80,7 +82,13 @@ export default function CreatePostDrawer() {
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
-          console.log("Uploaded");
+          toast({
+            title: "Post Uploaded",
+            description: "We've created new post.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
           setTimeout(() => {
             onClose();
           }, 5000);
@@ -88,7 +96,13 @@ export default function CreatePostDrawer() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        toast({
+          title: "Error ",
+          description: "Error Uploading new Post",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       });
     //   const resp = await fetch("http://localhost:4000/newpost", {
     //     method: "POST",

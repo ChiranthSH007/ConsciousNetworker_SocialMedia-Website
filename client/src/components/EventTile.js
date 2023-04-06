@@ -1,6 +1,7 @@
 import { Badge, Box, Stack, Text, useColorModeValue } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function EventTile({
   index,
@@ -16,7 +17,7 @@ export default function EventTile({
   uid,
 }) {
   const [regStatus, setRegStatus] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     async function checkReg() {
       await axios
@@ -37,6 +38,9 @@ export default function EventTile({
 
     checkReg();
   }, []);
+  function showdetails() {
+    navigate(`/eventdetails/${_id}`);
+  }
   return (
     <Box
       h={"80px"}
@@ -48,6 +52,7 @@ export default function EventTile({
       mb={2}
       overflow={"hidden"}
       justifyItems={"center"}
+      onClick={showdetails}
     >
       <Stack direction={"row"}>
         <Box
@@ -58,7 +63,7 @@ export default function EventTile({
           rounded={"md"}
           align={"center"}
         >
-          <Stack direction={"column"} spacing={0}>
+          <Stack direction={"column"} spacing={0} p={"5px"}>
             <Text fontWeight={"bold"} color={"white"}>
               30
             </Text>
@@ -67,9 +72,13 @@ export default function EventTile({
             </Text>
           </Stack>
         </Box>
-        <Stack direction={"column"} align={"start"} spacing={0}>
+        <Stack direction={"column"} w={"100%"}>
           <Stack direction={"row"} justify={"space-between"} align={"center"}>
-            <Text fontWeight={600}>Yoga</Text>
+            <Box w={"150px"}>
+              <Text fontWeight={600} noOfLines={1}>
+                {usereventname}
+              </Text>
+            </Box>
             {regStatus ? (
               <Badge colorScheme="green" width={"min-content"}>
                 Regitsered
@@ -81,10 +90,10 @@ export default function EventTile({
             )}
           </Stack>
           <Stack direction={"row"}>
-            <Text fontWeight={350}>Venue</Text>
+            <Text fontWeight={350}>📍{usereventlocation}</Text>
 
             <Text fontWeight={350} color={"green"}>
-              #meditation
+              #{usereventcategory}
             </Text>
           </Stack>
         </Stack>

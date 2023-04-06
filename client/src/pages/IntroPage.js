@@ -1,6 +1,23 @@
-import { memo } from "react";
+import { useEffect } from "react";
 import { Button } from "@chakra-ui/react";
+import axios from "axios";
 export default function IntroPage() {
+  useEffect(() => {
+    async function fetchData() {
+      await axios
+        .get("http://localhost:4000/profile", {
+          withCredentials: true,
+        })
+        .then((response) => {
+          window.location.href = "/pagefeed";
+        })
+        .catch((err) => {});
+    }
+    fetchData();
+  }, []);
+  function routeAuth() {
+    window.location.href = "/auth";
+  }
   return (
     <div style={{ border: "5px  red" }}>
       <div
@@ -29,18 +46,22 @@ export default function IntroPage() {
             variant="text"
             marginRight="20px"
             height={"50px"}
+            color={"white"}
             width={"120px"}
             borderRadius={"30px"}
+            onClick={routeAuth}
           >
             SIGN-UP
           </Button>
           <Button
             className="button1"
             variant="text"
+            color={"white"}
             colorScheme="blue"
             height={"50px"}
             width={"120px"}
             borderRadius={"30px"}
+            onClick={routeAuth}
             style={{
               background:
                 "linear-gradient(to bottom, #f89d8f 0%, #38609b 0.01%, #183154 100%)",
