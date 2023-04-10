@@ -47,7 +47,7 @@ export default function EventPage() {
               >
                 {Event.map((event) => (
                   <Events key={event._id} {...event} uid={uid} />
-                ))}
+                )).reverse()}
               </SimpleGrid>
             )}
           </>

@@ -186,13 +186,18 @@ export default function CreatePostDrawer() {
                     id="owner"
                     onChange={(ev) => setCategory(ev.target.value)}
                   >
-                    <option value="segun">Segun Adebayo</option>
-                    <option value="kola">Kola Tioluwani</option>
-                    <option value="kola">Kola Tioluwani</option>
-                    <option value="kola">Kola Tioluwani</option>
-                    <option value="kola">Kola Tioluwani</option>
-                    <option value="kola">Kola Tioluwani</option>
-                    <option value="kola">Kola Tioluwani</option>
+                    <option value="Body awareness">Body awareness</option>
+                    <option value="Sensory awareness">Sensory awareness</option>
+                    <option value="Emotion regulation">
+                      Emotion regulation
+                    </option>
+                    <option value="Self-compassion">Self-compassion</option>
+                    <option value="Mindful communication">
+                      Mindful communication
+                    </option>
+                    <option value="Mindful eating">Mindful eating</option>
+                    <option value="yoga">Yoga</option>
+                    <option value="Meditation">Meditation</option>
                   </Select>
                 </Box>
                 <Box>

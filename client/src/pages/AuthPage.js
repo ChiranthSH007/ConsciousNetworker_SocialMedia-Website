@@ -11,6 +11,8 @@ export default function AuthPage() {
   const [user, setUser] = useState({}); //make it to global when need to use it ouside
   const [redirect, setRedirect] = useState(false);
   const CLIENT_ID = "daf0a114d4dac5dc9a75";
+
+  
   async function handleCallbackResponse(response) {
     console.log("Encoded JWT ID Token: " + response.credential);
     var userObject = jwt_decode(response.credential);

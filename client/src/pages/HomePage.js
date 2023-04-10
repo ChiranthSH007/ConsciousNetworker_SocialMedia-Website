@@ -99,7 +99,8 @@ export default function PageFeed() {
           <GridItem colSpan={3} h="auto">
             {posts.length > 0 ? (
               <div>
-                {posts.length > 0 && posts.map((post) => <Post {...post} />)}
+                {posts.length > 0 &&
+                  posts.map((post) => <Post {...post} />).reverse()}
               </div>
             ) : (
               <Box>
@@ -168,7 +169,9 @@ export default function PageFeed() {
                 </Text>
                 <div>
                   {Event.length > 0 &&
-                    Event.map((post) => <EventTile {...post} uid={uid} />)}
+                    Event.map((post) => (
+                      <EventTile {...post} uid={uid} />
+                    )).reverse()}
                 </div>
               </Box>
             </Stack>

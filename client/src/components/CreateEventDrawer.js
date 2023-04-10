@@ -172,8 +172,9 @@ export default function CreateEventDrawer() {
                     type="text"
                     onChange={(ev) => setusereventcategory(ev.target.value)}
                   >
-                    <option value="segun">Segun Adebayo</option>
-                    <option value="kola">Kola Tioluwani</option>
+                    <option value="Online">Online</option>
+                    <option value="Offline">Offline</option>
+                    <option value="Hybrid">Hybrid</option>
                   </Select>
                 </Box>
 

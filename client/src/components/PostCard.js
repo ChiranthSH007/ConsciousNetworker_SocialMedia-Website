@@ -45,6 +45,7 @@ export default function Post({
             >
               <Image
                 h={"300px"}
+                w={"500px"}
                 maxW={"300px"}
                 rounded={"md"}
                 src={image}

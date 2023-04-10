@@ -27,7 +27,3 @@ function App() {
 
 export default App;
 
-/* 
-we’re using a fragment (<> ... </>) to wrap the two components. 
-This allows us to pass multiple elements as children of the Route without adding any extra DOM elements. 
-*/

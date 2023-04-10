@@ -64,6 +64,7 @@ export default function Events({
         console.log(response);
         if (response.status === 200) {
           console.log("Uploaded");
+          window.location.href = "/events";
         } else {
         }
       })
