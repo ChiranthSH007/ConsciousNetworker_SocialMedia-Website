@@ -17,13 +17,9 @@ var bodyParser = require("body-parser");
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
-const multer = require("multer");
-const fs = require("fs");
+
 const Post = require("./model/NewPost");
 const Events = require("./model/NewEvent");
-
-const postModel = require("./model/NewPost");
-const { response } = require("express");
 
 //const authrouter = require('./routes/user');
 
@@ -33,7 +29,8 @@ const { response } = require("express");
 app.get("/getGitAccessTokenUserdata", async (req, res) => {
   const authname = "GitHub";
 
-  req.query.code;
+  const accesstoken = req.query.code;
+  console.l0g(req.query.code);
   const params =
     "?client_id=" +
     CLIENT_ID +
@@ -92,6 +89,7 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
               const userDocs = await User.create({
                 username,
                 authname,
+                accesstoken,
                 email,
                 picture,
                 password,
@@ -132,6 +130,75 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
     });
 });
 
+app.post("/facebookauth", async (req, res) => {
+  const { userObj } = req.body;
+  // console.log(userObj);
+  if (userObj) {
+    const email = userObj.email;
+    const username = userObj.name;
+    const picture = userObj.picture.data.url;
+    const access_token = userObj.accessToken;
+
+    const authname = "Facebook";
+
+    const user = await User.find({ authname }).findOne({ email }).exec();
+    console.log(user);
+    if (user) {
+      jwt.sign(
+        {
+          uname: user.username,
+          id: user.id,
+          uemail: user.email,
+          upic: user.picture,
+        },
+        secret,
+        {},
+        (err, token) => {
+          if (err) throw err;
+          res.cookie("token", token).json("ok");
+        }
+      );
+    } else {
+      let password = bcrypt.hashSync(email + username, salt);
+      const userDocs = await User.create({
+        username,
+        authname,
+        access_token,
+        email,
+        picture,
+        password,
+      });
+      if (userDocs) {
+        const users = await User.find({ authname }).findOne({ email }).exec();
+        jwt.sign(
+          {
+            uname: users.username,
+            id: users.id,
+            uemail: users.email,
+            upic: users.picture,
+          },
+          secret,
+          {},
+          (err, token) => {
+            if (err) throw err;
+            res.cookie("token", token).json("ok");
+          }
+        );
+      } else {
+        return res.status.json({ error: "mongodb error" });
+      }
+      // let newUser = new User(name, email, picture, password);
+      // console.log(newUser);
+      // newUser.save((err, data) => {
+      //   if (err) {
+      //     return res.status.json({ error: "mongodb error" });
+      //   }
+      //   return res.json(data);
+      // });
+    }
+  }
+});
+
 // app.get("/getGitUserData", async (req, res) => {
 //   req.get("Authorization");
 //   await fetch("https://api.github.com/user", {
@@ -150,8 +217,8 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
 // });
 
 app.post("/googleauth", async (req, res) => {
-  const { userObj } = req.body;
-  console.log(userObj);
+  const { userObj, access_token } = req.body;
+  // console.log(userObj, access_token);
   if (userObj) {
     const email_verified = userObj.email_verified;
     const email = userObj.email;
@@ -182,6 +249,7 @@ app.post("/googleauth", async (req, res) => {
         const userDocs = await User.create({
           username,
           authname,
+          access_token,
           email,
           picture,
           password,

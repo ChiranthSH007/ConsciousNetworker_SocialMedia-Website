@@ -156,7 +156,6 @@ export default function IntroPage() {
         </div>
         <div
           style={{
-            border: "1px solid red",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -171,9 +170,8 @@ export default function IntroPage() {
               style={{ height: "80px" }}
             />
           </div>
-          <div style={{ textAlign: "center", color: "white" }}>
-            <p>© 2023 Designed by Team</p>
-          </div>
+          {/* Social Icons Div */}
+          <div style={{ textAlign: "center" }}></div>
           <div
             style={{ textAlign: "right", color: "white", marginRight: "5%" }}
           >
@@ -185,6 +183,7 @@ export default function IntroPage() {
             >
               hello@theconsciousnetworker.com
             </a>
+            <p>© 2023 Designed by Team</p>
           </div>
         </div>
       </div>

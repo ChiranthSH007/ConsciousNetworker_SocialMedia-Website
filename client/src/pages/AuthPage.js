@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-import { SiGithub } from "react-icons/si";
+import { SiFacebook, SiGithub } from "react-icons/si";
 import { Box, Button, Center, Image, Stack, Text } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
 export default function AuthPage() {
   const toast = useToast();
@@ -12,7 +13,6 @@ export default function AuthPage() {
   const [redirect, setRedirect] = useState(false);
   const CLIENT_ID = "daf0a114d4dac5dc9a75";
 
-  
   async function handleCallbackResponse(response) {
     console.log("Encoded JWT ID Token: " + response.credential);
     var userObject = jwt_decode(response.credential);
@@ -22,7 +22,7 @@ export default function AuthPage() {
     axios
       .post(
         "http://localhost:4000/googleauth",
-        { userObj: userObject },
+        { userObj: userObject, access_token: response.credential },
         {
           withCredentials: true,
         } //send data to server on 4000 port
@@ -106,7 +106,28 @@ export default function AuthPage() {
   if (redirect) {
     return <Navigate to={"/pagefeed"} />;
   }
-
+  const responseFacebook = (response) => {
+    console.log(response);
+    axios
+      .post(
+        "http://localhost:4000/facebookauth",
+        { userObj: response },
+        {
+          withCredentials: true,
+        } //send data to server on 4000 port
+      )
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          setRedirect(true);
+        } else {
+          alert("Facebook Something went wrong");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   function loginwithGithub() {
     window.location.assign(
       "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
@@ -157,8 +178,24 @@ export default function AuthPage() {
                     colorScheme={"gray"}
                     leftIcon={<SiGithub />}
                   >
-                    <Text>Send to Github</Text>
+                    <Text>Github</Text>
                   </Button>
+                  <FacebookLogin
+                    appId="603052405152675"
+                    autoLoad={true}
+                    fields="name,email,picture"
+                    callback={responseFacebook}
+                    render={(renderProps) => (
+                      <Button
+                        w={"400px"}
+                        colorScheme={"blue"}
+                        onClick={renderProps.onClick}
+                        leftIcon={<SiFacebook />}
+                      >
+                        <Text>Facebook</Text>
+                      </Button>
+                    )}
+                  />
                 </Stack>
               </Stack>
             </Box>
