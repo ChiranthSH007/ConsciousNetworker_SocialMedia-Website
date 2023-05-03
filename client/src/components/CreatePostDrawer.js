@@ -166,9 +166,10 @@ export default function CreatePostDrawer() {
                 </Box>
                 <Box>
                   <FormLabel htmlFor="desc" fontWeight={650}>
-                    Description
+                    Description (Max 300)
                   </FormLabel>
                   <Textarea
+                    maxLength={300}
                     value={desc}
                     id="desc"
                     h={"300px"}

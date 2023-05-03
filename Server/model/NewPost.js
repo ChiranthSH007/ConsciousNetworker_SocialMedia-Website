@@ -9,6 +9,7 @@ const PostSchema = new mongoose.Schema(
     authorname: { type: String },
     authorpic: { type: String },
     image: { type: String },
+    usersliked: { type: Array },
   },
   {
     timestamps: true,

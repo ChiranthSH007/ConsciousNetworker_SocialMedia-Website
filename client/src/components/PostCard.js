@@ -10,10 +10,14 @@ import {
   Flex,
   IconButton,
   Badge,
+  useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { BiLike, BiComment, BiShareAlt } from "react-icons/bi";
 
 export default function Post({
+  _id,
   title,
   description,
   category,
@@ -21,7 +25,61 @@ export default function Post({
   authorpic,
   image,
   createdAt,
+  uid,
 }) {
+  const [likeStatus, setLikeStatus] = useState(false);
+  const toast = useToast();
+
+  useEffect(() => {
+    async function checkLike() {
+      await axios
+        .post("http://localhost:4000/checklike", {
+          pid: _id,
+          uid: uid,
+        })
+        .then((response) => {
+          if (response.data != null) {
+            // console.log("CheckRegistration Response" + response.data);
+            console.log("times");
+            setLikeStatus(true);
+          } else {
+            setLikeStatus(false);
+          }
+        });
+    }
+
+    checkLike();
+  }, []);
+  async function newLike() {
+    await axios
+      .post("http://localhost:4000/likedislike", { pid: _id, uid: uid })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          console.log("Liked");
+        } else {
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function copy() {
+    const el = document.createElement("input");
+    el.value = window.location.href;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
+    toast({
+      title: "Copied Link",
+      status: "info",
+      duration: 2000,
+      isClosable: true,
+    });
+  }
+
   return (
     <>
       <Center py={6}>
@@ -94,16 +152,28 @@ export default function Post({
                     </Stack>
                   </Stack>
                   <Stack direction={"row"} align={"center"}>
-                    <IconButton
-                      icon={<BiLike />}
-                      position={"-moz-initial"}
-                    ></IconButton>
-                    <IconButton
+                    {likeStatus ? (
+                      <IconButton
+                        icon={<BiLike />}
+                        onClick={newLike}
+                        colorScheme={"red"}
+                        position={"-moz-initial"}
+                      ></IconButton>
+                    ) : (
+                      <IconButton
+                        icon={<BiLike />}
+                        onClick={newLike}
+                        position={"-moz-initial"}
+                      ></IconButton>
+                    )}
+
+                    {/* <IconButton
                       icon={<BiComment />}
                       position={"-moz-initial"}
-                    ></IconButton>
+                    ></IconButton> */}
                     <IconButton
                       icon={<BiShareAlt />}
+                      onClick={copy}
                       position={"-moz-initial"}
                     ></IconButton>
                   </Stack>

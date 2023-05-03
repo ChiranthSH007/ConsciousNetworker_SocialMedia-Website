@@ -46,7 +46,7 @@ export default function EventPage() {
                 marginBottom="1%"
               >
                 {Event.map((event) => (
-                  <Events key={event._id} {...event} uid={uid} />
+                  <Events {...event} uid={uid} />
                 )).reverse()}
               </SimpleGrid>
             )}

@@ -2,8 +2,16 @@ import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-import { SiFacebook, SiGithub } from "react-icons/si";
-import { Box, Button, Center, Image, Stack, Text } from "@chakra-ui/react";
+import { SiFacebook, SiGithub, SiLinkedin } from "react-icons/si";
+import {
+  Box,
+  Button,
+  Center,
+  Grid,
+  Image,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
@@ -12,6 +20,7 @@ export default function AuthPage() {
   const [user, setUser] = useState({}); //make it to global when need to use it ouside
   const [redirect, setRedirect] = useState(false);
   const CLIENT_ID = "daf0a114d4dac5dc9a75";
+
 
   async function handleCallbackResponse(response) {
     console.log("Encoded JWT ID Token: " + response.credential);
@@ -84,7 +93,7 @@ export default function AuthPage() {
               toast({
                 title: "Account created.",
                 description: "We've created your account for you.",
-                status: "success",
+                status: "loading",
                 duration: 5000,
                 isClosable: true,
               });
@@ -136,6 +145,7 @@ export default function AuthPage() {
   return (
     <Box>
       <Center>
+        <Grid templateColumns="repeat(5, 1fr)" gap={3}></Grid>
         <Stack direction={"column"} pt={"50px"} align={"center"}>
           <Image
             src="./logonameblack.png"
@@ -161,7 +171,7 @@ export default function AuthPage() {
             <Box
               w={"500px"}
               bgColor={"#3f3d56"}
-              h={"300px"}
+              h={"400px"}
               rounded={"lg"}
               boxShadow={"2xl"}
             >
@@ -179,6 +189,14 @@ export default function AuthPage() {
                     leftIcon={<SiGithub />}
                   >
                     <Text>Github</Text>
+                  </Button>
+                  <Button
+                    w={"400px"}
+                    onClick={""}
+                    colorScheme={"blue"}
+                    leftIcon={<SiLinkedin />}
+                  >
+                    <Text>LinkedIn</Text>
                   </Button>
                   <FacebookLogin
                     appId="603052405152675"

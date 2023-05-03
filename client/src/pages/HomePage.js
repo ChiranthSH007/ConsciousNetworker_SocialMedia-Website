@@ -35,6 +35,7 @@ export default function PageFeed() {
           withCredentials: true,
         })
         .then((response) => {
+          console.log(response);
           setUid(response.data.id);
         })
         .catch((err) => {
@@ -87,20 +88,20 @@ export default function PageFeed() {
               }}
             >
               <Text color={"gray.600"} fontWeight={"bold"} mb={5}>
-                Your Groups
+                Motivational Quotes
               </Text>
-              <div>
+              {/* <div>
                 {groups.map((groups) => (
                   <GroupCard {...groups} />
                 ))}
-              </div>
+              </div> */}
             </Box>
           </GridItem>
           <GridItem colSpan={3} h="auto">
             {posts.length > 0 ? (
               <div>
                 {posts.length > 0 &&
-                  posts.map((post) => <Post {...post} />).reverse()}
+                  posts.map((post) => <Post {...post} uid={uid} />).reverse()}
               </div>
             ) : (
               <Box>

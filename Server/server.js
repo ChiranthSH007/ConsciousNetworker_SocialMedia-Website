@@ -20,6 +20,7 @@ app.use(cookieParser());
 
 const Post = require("./model/NewPost");
 const Events = require("./model/NewEvent");
+const { IoCheckmarkCircle } = require("react-icons/io5");
 
 //const authrouter = require('./routes/user');
 
@@ -30,7 +31,7 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
   const authname = "GitHub";
 
   const accesstoken = req.query.code;
-  console.l0g(req.query.code);
+  console.log(req.query.code);
   const params =
     "?client_id=" +
     CLIENT_ID +
@@ -290,6 +291,7 @@ app.post("/googleauth", async (req, res) => {
 
 app.get("/profile", (req, res) => {
   const { token } = req.cookies;
+  console.log(token);
   jwt.verify(token, secret, {}, (err, info) => {
     if (err) throw err;
     console.log(info);
@@ -393,6 +395,37 @@ app.post("/checkreg", async (req, res) => {
   });
   res.json(checkR);
 });
+
+app.post("/likedislike", async (req, res) => {
+  const { pid, uid } = req.body;
+  const findStat = await Post.findOne({ _id: pid }).findOne({
+    usersliked: uid,
+  });
+  if (findStat == null) {
+    const updtaeregDoc = await Post.updateOne(
+      { _id: pid },
+      { $push: { usersliked: uid } }
+    );
+    res.json(updtaeregDoc);
+  } else {
+    const dislike = await Post.updateOne(
+      { _id: pid },
+      {
+        $pull: {
+          usersliked: uid,
+        },
+      }
+    );
+    res.json(dislike);
+  }
+});
+app.post("/checklike", async (req, res) => {
+  const { pid, uid } = req.body;
+  const checkL = await Post.findOne({ _id: pid }).findOne({
+    usersliked: uid,
+  });
+  res.json(checkL);
+});
 app.get("/getevent", async (req, res) => {
   res.json(await Events.find());
 });
@@ -416,36 +449,3 @@ app.listen(4000, function () {
 //       res.redirect('/login');
 //   }
 // });
-
-// login: 'ChiranthSH007',
-//   id: 67058139,
-//   node_id: 'MDQ6VXNlcjY3MDU4MTM5',
-//   avatar_url: 'https://avatars.githubusercontent.com/u/67058139?v=4',
-//   gravatar_id: '',
-//   url: 'https://api.github.com/users/ChiranthSH007',
-//   html_url: 'https://github.com/ChiranthSH007',
-//   followers_url: 'https://api.github.com/users/ChiranthSH007/followers',
-//   following_url: 'https://api.github.com/users/ChiranthSH007/following{/other_user}',
-//   gists_url: 'https://api.github.com/users/ChiranthSH007/gists{/gist_id}',
-//   starred_url: 'https://api.github.com/users/ChiranthSH007/starred{/owner}{/repo}',
-//   subscriptions_url: 'https://api.github.com/users/ChiranthSH007/subscriptions',
-//   organizations_url: 'https://api.github.com/users/ChiranthSH007/orgs',
-//   repos_url: 'https://api.github.com/users/ChiranthSH007/repos',
-//   events_url: 'https://api.github.com/users/ChiranthSH007/events{/privacy}',
-//   received_events_url: 'https://api.github.com/users/ChiranthSH007/received_events',
-//   type: 'User',
-//   site_admin: false,
-//   name: 'Chiranth SH',
-//   company: null,
-//   blog: '',
-//   location: null,
-//   email: 'chiranthsh007@gmail.com',
-//   hireable: true,
-//   bio: 'Android Developer (Flutter) && Data Science and Machine Learning Enthusiast',
-//   twitter_username: 'shchiranth',
-//   public_repos: 19,
-//   public_gists: 0,
-//   followers: 2,
-//   following: 2,
-//   created_at: '2020-06-17T13:03:14Z',
-//   updated_at: '2023-03-24T13:05:35Z'
