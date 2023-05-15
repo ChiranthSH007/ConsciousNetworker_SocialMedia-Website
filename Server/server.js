@@ -11,6 +11,10 @@ const salt = bcrypt.genSaltSync(10);
 const secret = "dakjhdua5d6ab23j4g2387";
 const CLIENT_ID = "daf0a114d4dac5dc9a75";
 const CLIENT_SECRET = "d326a97d875feb179c5f4cd4df76cda5d8b9c9d8";
+const axios = require("axios");
+const client_id = "86a0mhak6rvp60";
+const client_secret = "GQb2YUCnx7OfSPzT";
+const redirect_uri = "pagefeed";
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" })); //add to avoid CORS error
 var bodyParser = require("body-parser");
@@ -287,6 +291,116 @@ app.post("/googleauth", async (req, res) => {
   }
   // const userDocs = await User.create({ username, email });
   //res.json(userObj);
+});
+app.get("/linkedinauth", async (req, res) => {
+  const authname = "linkedin";
+  const code = req.query.code;
+  try {
+    // Exchange authorization code for access token
+    const response = await axios.post(
+      "https://www.linkedin.com/oauth/v2/accessToken?code=" +
+        code +
+        "&grant_type=authorization_code&client_id=" +
+        client_id +
+        "&client_secret=" +
+        client_secret +
+        "&redirect_uri=http://localhost:3000/pagefeed",
+      {
+        responseType: "json",
+      }
+    );
+    const accessToken = response.data.access_token;
+    // Get user data and email address
+    const [userData, emailData, imageData] = await Promise.all([
+      axios.get("https://api.linkedin.com/v2/me", {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          "cache-control": "no-cache",
+          "X-Restli-Protocol-Version": "2.0.0",
+        },
+      }),
+      axios.get(
+        "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken,
+            "cache-control": "no-cache",
+            "X-Restli-Protocol-Version": "2.0.0",
+          },
+        }
+      ),
+      axios.get(
+        "https://api.linkedin.com/v2/me?projection=(id,profilePicture(displayImage~:playableStreams))",
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken,
+            "cache-control": "no-cache",
+            "X-Restli-Protocol-Version": "2.0.0",
+          },
+          responseType: "json",
+        }
+      ),
+    ]);
+    const firstName = userData.data.firstName.localized.en_US;
+    const lastName = userData.data.lastName.localized.en_US;
+    const email = emailData.data.elements[0]["handle~"].emailAddress;
+    const profilePic =
+      imageData.data.profilePicture["displayImage~"].elements[0].identifiers[0]
+        .identifier;
+    // Check if the user already exists in the database
+    const user = await User.find({ authname }).findOne({ email }).exec();
+    console.log("USerDetails: " + firstName + lastName + email + profilePic);
+    if (user) {
+      jwt.sign(
+        {
+          uname: user.username,
+          id: user.id,
+          uemail: user.email,
+          upic: user.picture,
+        },
+        secret,
+        {},
+        (err, token) => {
+          if (err) throw err;
+          res.cookie("token", token).json("ok");
+          console.log(token);
+        }
+      );
+    } else {
+      // Create a new user in the database
+      const password = bcrypt.hashSync(email + firstName, salt);
+      const userDocs = await User.create({
+        username: `${firstName} ${lastName}`,
+        authname,
+        access_token: accessToken,
+        email,
+        picture: profilePic,
+        password,
+      });
+      if (userDocs) {
+        const newUser = await User.find({ authname }).findOne({ email }).exec();
+        jwt.sign(
+          {
+            uname: newUser.username,
+            id: newUser.id,
+            uemail: newUser.email,
+            upic: newUser.picture,
+          },
+          secret,
+          {},
+          (err, token) => {
+            if (err) throw err;
+            res.cookie("token", token).json("ok");
+          }
+        );
+      } else {
+        return res.status.json({ error: "mongodb error" });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
 });
 
 app.get("/profile", (req, res) => {

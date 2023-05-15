@@ -38,8 +38,26 @@ export default function PageFeed() {
           console.log(response);
           setUid(response.data.id);
         })
-        .catch((err) => {
-          window.location.href = "/auth";
+        .catch(async (err) => {
+          const queryString = window.location.search;
+          const urlParams = new URLSearchParams(queryString);
+          const code = urlParams.get("code");
+          console.log("this is the code: " + code);
+          try {
+            const response = await axios.get(
+              "http://localhost:4000/linkedinauth?code=" + code,
+              {
+                withCredentials: true,
+              }
+            );
+            fetchData();
+            window.location.reload();
+            console.log(response.data);
+          } catch (error) {
+            console.log(error);
+            //window.location.href="/auth"
+          }
+          if (code == "") window.location.href = "/auth";
         });
     }
     fetchData();

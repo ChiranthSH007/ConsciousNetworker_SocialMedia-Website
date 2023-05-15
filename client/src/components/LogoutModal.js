@@ -35,7 +35,7 @@ export default function LogoutModaal() {
   function logout() {
     axios
       .get("http://localhost:4000/logout", { withCredentials: true })
-      .then((res) => (window.location.href = "/auth"));
+      .then((res) => (window.location.href = "/"));
   }
   return (
     <>

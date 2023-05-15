@@ -20,7 +20,10 @@ export default function AuthPage() {
   const [user, setUser] = useState({}); //make it to global when need to use it ouside
   const [redirect, setRedirect] = useState(false);
   const CLIENT_ID = "daf0a114d4dac5dc9a75";
-
+  const client_id = "86a0mhak6rvp60";
+  const client_secret = "GQb2YUCnx7OfSPzT";
+  const accessToken =
+    "AQWfhGIYSpqJb-E5HEzc4jZFQwBOsTKCtQBEbzZYaRBwSxIYTrQzN1g5Y_GUrZckScilbtFAIP1lDxYj0ugjZYRS62waZNJVaj1NiV2gkEh3GR4VHHUiFB64jl51bFEJw6bb1YfMtryGXtlr8yxsCrWFaosNSg60sED9JxmYmvv4OmHovb3llYAC9e5YeC7BM7gtt8An0oDRGGkaET9l-5MnYl4FcbRwa0b2Mt422IlLjP-MnBWHlUwAITD3ceyul9UxMij5wkembPAZ4I19BIbGg2jqp5nqcDRVumTdjGqVSEwM00VI8YwBrXCEQGy4UPeWmdKPnMH0QHnUtWkppkewsJ9ghg";
 
   async function handleCallbackResponse(response) {
     console.log("Encoded JWT ID Token: " + response.credential);
@@ -47,10 +50,6 @@ export default function AuthPage() {
       .catch((err) => {
         console.log(err);
       });
-  }
-  function handleSignOut(event) {
-    setUser({});
-    document.getElementById("googlesigninDiv").hidden = false; //to show the login button after signout
   }
 
   useEffect(() => {
@@ -137,10 +136,30 @@ export default function AuthPage() {
         console.log(err);
       });
   };
+
+  async function LoginwithLinkedin() {
+    const authUrl =
+      "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" +
+      client_id +
+      "&redirect_uri=http://localhost:3000/pagefeed&state=football&scope=r_liteprofile%20r_emailaddress";
+    await axios
+      .get("http://localhost:4000/linkedinauth")
+      .then((response) => {
+        console.log(response);
+        window.location.href = authUrl;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   function loginwithGithub() {
     window.location.assign(
       "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
     );
+  }
+  function HomeRoute() {
+    window.location.href = "/";
   }
   return (
     <Box>
@@ -148,6 +167,7 @@ export default function AuthPage() {
         <Grid templateColumns="repeat(5, 1fr)" gap={3}></Grid>
         <Stack direction={"column"} pt={"50px"} align={"center"}>
           <Image
+            onClick={HomeRoute}
             src="./logonameblack.png"
             h={"70px"}
             w={"200px"}
@@ -192,7 +212,7 @@ export default function AuthPage() {
                   </Button>
                   <Button
                     w={"400px"}
-                    onClick={""}
+                    onClick={LoginwithLinkedin}
                     colorScheme={"blue"}
                     leftIcon={<SiLinkedin />}
                   >
@@ -221,21 +241,5 @@ export default function AuthPage() {
         </Stack>
       </Center>
     </Box>
-    // <div className="authdiv">
-    //   <h1>Authentication Page</h1>
-    //   <div id="googlesigninDiv"></div>
-    //   {/* {Object.keys(user).length !== 0 && (
-    //     <button onClick={(e) => handleSignOut(e)}>Signout</button>
-    //   )}
-    //   {user && (
-    //     <div>
-    //       <img src={user.picture}></img>
-    //       <h3>{user.name}</h3>
-    //     </div>
-    //   )} */}
-    //   <div className="gitSignindiv">
-    //     <button onClick={loginwithGithub}>Login with Github</button>
-    //   </div>
-    // </div>
   );
 }
