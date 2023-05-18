@@ -1,33 +1,24 @@
-import { Box, Avatar, Text, Stack } from "@chakra-ui/react";
+import { Box, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 
-export default function GroupCard() {
+export default function GroupCard({ quote, author }) {
   return (
     <>
-      <Box mt={2} mb={3}>
-        <Stack direction={"row"} align={"center"} spacing={5}>
-          <Avatar
-            size={"md"}
-            src={"https://avatars0.githubusercontent.com/u/1164541?v=4"}
-            alt={"Author"}
-          />
-          <Text fontWeight={600}>Meditation Group</Text>
-        </Stack>
+      <Box
+        h={"120px"}
+        bg={useColorModeValue("#f2f3f8", "gray.900")}
+        boxShadow={"2xs"}
+        rounded={"md"}
+        p={"10px"}
+        mt={2}
+        mb={2}
+        overflow={"hidden"}
+        justifyItems={"center"}
+      >
+        <VStack>
+          <Text fontWeight={"bold"}>"{quote}"</Text>
+          <Text fontStyle={"italic"}>- {author}</Text>
+        </VStack>
       </Box>
     </>
   );
 }
-
-//POst Card
-//Image
-//Title
-//Category
-//Desc
-//Author
-
-//event tile
-//event name
-//organizer
-//desc
-//time
-//image
-//

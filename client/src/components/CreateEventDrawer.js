@@ -13,12 +13,8 @@ import {
   Textarea,
   FormLabel,
   Select,
-  InputRightAddon,
-  InputLeftAddon,
   Input,
-  InputGroup,
   FormControl,
-  Toast,
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -33,7 +29,6 @@ export default function CreateEventDrawer() {
   const [usereventdescription, setusereventdescription] = useState("");
   const [usereventlocation, setusereventlocation] = useState("");
   const [usereventtime, setusereventtime] = useState("");
-  // const [usereventfee, setusereventfee] = useState("");
   const [usereventorggmail, setusereventorggmail] = useState("");
   const [usereventorgname, setusereventorgname] = useState("");
   const [usereventlean, setusereventlearn] = useState("");
@@ -48,9 +43,6 @@ export default function CreateEventDrawer() {
     setfiles(base64);
   };
   async function createNewEvent(ev) {
-    // const data = new FormData();
-    // data.set("title", title);
-    // data.set("imageFile", files);
     ev.preventDefault();
 
     axios
@@ -63,7 +55,6 @@ export default function CreateEventDrawer() {
           usereventlocation: usereventlocation,
           usereventtime: usereventtime,
           usereventorggmail: usereventorggmail,
-          // usereventfee: usereventfee,
           usereventorgname: usereventorgname,
           usereventlean: usereventlean,
           usereventlanguage: usereventlanguage,
@@ -76,7 +67,6 @@ export default function CreateEventDrawer() {
         }
       )
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           toast({
             title: "Event Created",
@@ -101,19 +91,6 @@ export default function CreateEventDrawer() {
           isClosable: true,
         });
       });
-    //   const resp = await fetch("http://localhost:4000/newpost", {
-    //     method: "POST",
-    //     body: data,
-    //     credentials: "include",
-    //   });
-    //   if (resp.ok) {
-    //     setShowSuccessAlert(true);
-    //     setTimeout(() => {
-    //       setredirect(true);
-    //     }, 5000);
-    //   } else {
-    //     setShowErrorAlert(true);
-    //   }
   }
   function convertToBase64(file) {
     return new Promise((resolve, reject) => {
@@ -250,13 +227,6 @@ export default function CreateEventDrawer() {
                     onChange={(ev) => setusereventtime(ev.target.value)}
                   />
                 </Box>
-                {/* <Box>
-                  <FormLabel>Entry Fee</FormLabel>
-                  <Input
-                    type="number"
-                    onChange={(ev) => setusereventfee(ev.target.value)}
-                  />
-                </Box> */}
               </Stack>
             </FormControl>
           </DrawerBody>

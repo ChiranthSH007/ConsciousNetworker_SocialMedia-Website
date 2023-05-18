@@ -1,4 +1,3 @@
-import { AddIcon } from "@chakra-ui/icons";
 import {
   Card,
   CardBody,
@@ -12,18 +11,13 @@ import {
   useColorModeValue,
   Box,
   Badge,
-  Avatar,
-  Icon,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { IoPerson } from "react-icons/io5";
 
 export default function Events({
-  index,
   usereventname,
-  usereventdescription,
   usereventlocation,
   usereventtime,
   eventimg,
@@ -45,8 +39,6 @@ export default function Events({
         })
         .then((response) => {
           if (response.data != null) {
-            // console.log("CheckRegistration Response" + response.data);
-            console.log("times");
             setRegStatus(true);
           } else {
             setRegStatus(false);
@@ -61,9 +53,7 @@ export default function Events({
     await axios
       .post("http://localhost:4000/newregister", { eid: _id, uid: uid })
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
-          console.log("Uploaded");
           window.location.href = "/events";
         } else {
         }
@@ -133,21 +123,6 @@ export default function Events({
                 {usereventorggmail.slice(0, 10)}
               </Text>
             </Stack>
-
-            {/* <Box
-              w={"80px"}
-              h={"100px"}
-              bgColor={"green.200"}
-              rounded={"md"}
-              boxShadow={"2xl"}
-              align={"center"}
-            >
-              <Stack direction={"column"} spacing={0} alignItems={"center"}>
-                <Text fontWeight={"bold"}>5</Text>
-                <Text fontWeight={"bold"}>Apr</Text>
-                <Text fontWeight={"bold"}>5:00 AM</Text>
-              </Stack>
-            </Box> */}
           </Stack>
         </CardBody>
         <Divider />

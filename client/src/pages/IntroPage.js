@@ -10,12 +10,12 @@ export default function IntroPage() {
   const CLIENT_ID = "daf0a114d4dac5dc9a75";
   const [redirect, setRedirect] = useState(false);
   const toast = useToast();
+  let googleButtonWrapper;
   const google = window.google;
 
   async function handleCallbackResponse(response) {
-    console.log("Encoded JWT ID Token: " + response.credential);
     var userObject = jwt_decode(response.credential);
-    console.log(userObject);
+
     axios
       .post(
         "http://localhost:4000/googleauth",
@@ -25,7 +25,6 @@ export default function IntroPage() {
         } //send data to server on 4000 port
       )
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           setRedirect(true);
         } else {
@@ -50,24 +49,38 @@ export default function IntroPage() {
           google.accounts.id.initialize({
             client_id:
               "114967761590-cnoplbn3sqo1art2auetnuffsbeglloe.apps.googleusercontent.com",
+            ux_mode: "popup",
             callback: handleCallbackResponse,
           });
-          google.accounts.id.renderButton(
-            document.getElementById("googleIconBtn"),
-            {
-              shape: "circle",
+
+          const createFakeGoogleWrapper = () => {
+            const googleLoginWrapper = document.createElement("div");
+            googleLoginWrapper.style.display = "none";
+            googleLoginWrapper.classList.add("custom-google-button");
+
+            document.body.appendChild(googleLoginWrapper);
+
+            google.accounts.id.renderButton(googleLoginWrapper, {
               type: "icon",
-              size: "large",
-              width: 200,
-            }
-          );
+              width: "200",
+            });
+
+            const googleLoginWrapperButton =
+              googleLoginWrapper.querySelector("div[role=button]");
+
+            return {
+              click: () => {
+                googleLoginWrapperButton.click();
+              },
+            };
+          };
+          googleButtonWrapper = createFakeGoogleWrapper();
 
           //Github OAuth Code
           //if code param exists just call getGitAccessTokenUserdata
           const queryString = window.location.search;
           const urlParams = new URLSearchParams(queryString);
           const codeParam = urlParams.get("code");
-          console.log(codeParam);
 
           if (codeParam) {
             async function getAccessToken() {
@@ -80,7 +93,6 @@ export default function IntroPage() {
                   }
                 )
                 .then((response) => {
-                  console.log(response);
                   if (response.status === 200) {
                     toast({
                       title: "Account created.",
@@ -107,6 +119,9 @@ export default function IntroPage() {
     fetchData();
   }, []);
 
+  function handleGoogleLogin() {
+    googleButtonWrapper.click();
+  }
   function routeAuth() {
     window.location.href = "/auth";
   }
@@ -120,7 +135,6 @@ export default function IntroPage() {
     return <Navigate to={"/pagefeed"} />;
   }
   const responseFacebook = (response) => {
-    console.log(response);
     axios
       .post(
         "http://localhost:4000/facebookauth",
@@ -130,7 +144,6 @@ export default function IntroPage() {
         } //send data to server on 4000 port
       )
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           setRedirect(true);
         } else {
@@ -150,7 +163,6 @@ export default function IntroPage() {
     await axios
       .get("http://localhost:4000/linkedinauth")
       .then((response) => {
-        console.log(response);
         window.location.href = authUrl;
       })
       .catch((err) => {
@@ -168,11 +180,13 @@ export default function IntroPage() {
           height: "140px",
         }}
       >
-        <div style={{ textAlign: "left", marginLeft: "1%" }}>
+        <div
+          style={{ textAlign: "left", marginLeft: "1%", paddingLeft: "25px" }}
+        >
           <img
             src="/logoname-1@2x.png"
             maxWidth="100%"
-            style={{ height: "110px" }}
+            style={{ height: "90px" }}
           />
         </div>
         <div style={{ textAlign: "right", marginRight: "1%" }}>
@@ -310,8 +324,9 @@ export default function IntroPage() {
             />
           </div>
           <div style={{ display: "flex", margin: "20px" }}>
-            {/* <button
-              id="googleIconBtn"
+            <button
+              class="my-awesome-button"
+              onClick={handleGoogleLogin}
               style={{
                 marginLeft: "20px",
                 border: "2px solid white",
@@ -330,8 +345,7 @@ export default function IntroPage() {
                 height={"20px"}
                 alt="googleimage"
               ></img>
-            </button> */}
-            <div id="googleIconBtn" style={{ margin: "10px" }}></div>
+            </button>
 
             <button
               onClick={loginwithGithub}

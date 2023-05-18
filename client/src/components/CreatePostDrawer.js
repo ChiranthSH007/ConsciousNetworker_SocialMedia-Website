@@ -18,7 +18,6 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
 
 export default function CreatePostDrawer() {
@@ -30,10 +29,6 @@ export default function CreatePostDrawer() {
   const [title, settitle] = useState("");
   const [desc, setDesc] = useState("");
   const [category, setCategory] = useState("");
-
-  const [redirect, setredirect] = useState("");
-  //   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  //   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [userName, setUserName] = useState(null);
   const [userPic, setUserPic] = useState(null);
 
@@ -59,9 +54,6 @@ export default function CreatePostDrawer() {
     setfiles(base64);
   };
   async function createNewPost(ev) {
-    // const data = new FormData();
-    // data.set("title", title);
-    // data.set("imageFile", files);
     ev.preventDefault();
 
     axios
@@ -80,7 +72,6 @@ export default function CreatePostDrawer() {
         }
       )
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           toast({
             title: "Post Uploaded",
@@ -104,19 +95,6 @@ export default function CreatePostDrawer() {
           isClosable: true,
         });
       });
-    //   const resp = await fetch("http://localhost:4000/newpost", {
-    //     method: "POST",
-    //     body: data,
-    //     credentials: "include",
-    //   });
-    //   if (resp.ok) {
-    //     setShowSuccessAlert(true);
-    //     setTimeout(() => {
-    //       setredirect(true);
-    //     }, 5000);
-    //   } else {
-    //     setShowErrorAlert(true);
-    //   }
   }
 
   function convertToBase64(file) {

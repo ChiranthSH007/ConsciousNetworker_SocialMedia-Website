@@ -1,20 +1,22 @@
+require("dotenv").config();
 require("./db/conn");
 const express = require("express");
 const User = require("./model/schema");
+const Quote = require("./model/NewQuote");
 require("./db/conn");
+const axios = require("axios");
 const app = express();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const salt = bcrypt.genSaltSync(10);
-const secret = "dakjhdua5d6ab23j4g2387";
-const CLIENT_ID = "daf0a114d4dac5dc9a75";
-const CLIENT_SECRET = "d326a97d875feb179c5f4cd4df76cda5d8b9c9d8";
-const axios = require("axios");
-const client_id = "86a0mhak6rvp60";
-const client_secret = "GQb2YUCnx7OfSPzT";
-const redirect_uri = "pagefeed";
+
+const secret = process.env.JWT_SECRET;
+const CLIENT_ID = process.env.GIT_CLIENT_ID;
+const CLIENT_SECRET = process.env.GIT_CLIENT_SECRET;
+const client_id = process.env.IN_CLIENT_ID;
+const client_secret = process.env.IN_CLIENT_SECRET;
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" })); //add to avoid CORS error
 var bodyParser = require("body-parser");
@@ -24,18 +26,11 @@ app.use(cookieParser());
 
 const Post = require("./model/NewPost");
 const Events = require("./model/NewEvent");
-const { IoCheckmarkCircle } = require("react-icons/io5");
-
-//const authrouter = require('./routes/user');
-
-// app.use("/uploads", express.static(__dirname + "/uploads"));
-// // app.use(cookieParser());
 
 app.get("/getGitAccessTokenUserdata", async (req, res) => {
   const authname = "GitHub";
 
   const accesstoken = req.query.code;
-  console.log(req.query.code);
   const params =
     "?client_id=" +
     CLIENT_ID +
@@ -53,7 +48,6 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
       return response.json();
     })
     .then(async (data) => {
-      console.log(data);
       await fetch("https://api.github.com/user", {
         method: "GET",
         headers: {
@@ -64,7 +58,6 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
           return response.json();
         })
         .then(async (data) => {
-          console.log(data);
           const email = data.email;
           const username = data.name;
           const picture = data.avatar_url;
@@ -72,9 +65,7 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
             const user = await User.find({ authname })
               .findOne({ email })
               .exec();
-            console.log(user);
             if (user) {
-              console.log("In User");
               jwt.sign(
                 {
                   uname: user.username,
@@ -103,7 +94,6 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
                 const users = await User.find({ authname })
                   .findOne({ email })
                   .exec();
-                console.log(users);
                 jwt.sign(
                   {
                     uname: users.username,
@@ -121,14 +111,6 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
               } else {
                 return res.status.json({ error: "mongodb error" });
               }
-              // let newUser = new User(name, email, picture, password);
-              // console.log(newUser);
-              // newUser.save((err, data) => {
-              //   if (err) {
-              //     return res.status.json({ error: "mongodb error" });
-              //   }
-              //   return res.json(data);
-              // });
             }
           }
         });
@@ -137,7 +119,6 @@ app.get("/getGitAccessTokenUserdata", async (req, res) => {
 
 app.post("/facebookauth", async (req, res) => {
   const { userObj } = req.body;
-  // console.log(userObj);
   if (userObj) {
     const email = userObj.email;
     const username = userObj.name;
@@ -147,7 +128,6 @@ app.post("/facebookauth", async (req, res) => {
     const authname = "Facebook";
 
     const user = await User.find({ authname }).findOne({ email }).exec();
-    console.log(user);
     if (user) {
       jwt.sign(
         {
@@ -192,38 +172,12 @@ app.post("/facebookauth", async (req, res) => {
       } else {
         return res.status.json({ error: "mongodb error" });
       }
-      // let newUser = new User(name, email, picture, password);
-      // console.log(newUser);
-      // newUser.save((err, data) => {
-      //   if (err) {
-      //     return res.status.json({ error: "mongodb error" });
-      //   }
-      //   return res.json(data);
-      // });
     }
   }
 });
 
-// app.get("/getGitUserData", async (req, res) => {
-//   req.get("Authorization");
-//   await fetch("https://api.github.com/user", {
-//     method: "GET",
-//     headers: {
-//       Authorization: req.get("Authorization"),
-//     },
-//   })
-//     .then((response) => {
-//       return response.json();
-//     })
-//     .then((data) => {
-//       console.log(data);
-//       res.json(data);
-//     });
-// });
-
 app.post("/googleauth", async (req, res) => {
   const { userObj, access_token } = req.body;
-  // console.log(userObj, access_token);
   if (userObj) {
     const email_verified = userObj.email_verified;
     const email = userObj.email;
@@ -233,7 +187,6 @@ app.post("/googleauth", async (req, res) => {
 
     if (email_verified) {
       const user = await User.find({ authname }).findOne({ email }).exec();
-      console.log(user);
       if (user) {
         jwt.sign(
           {
@@ -278,19 +231,9 @@ app.post("/googleauth", async (req, res) => {
         } else {
           return res.status.json({ error: "mongodb error" });
         }
-        // let newUser = new User(name, email, picture, password);
-        // console.log(newUser);
-        // newUser.save((err, data) => {
-        //   if (err) {
-        //     return res.status.json({ error: "mongodb error" });
-        //   }
-        //   return res.json(data);
-        // });
       }
     }
   }
-  // const userDocs = await User.create({ username, email });
-  //res.json(userObj);
 });
 app.get("/linkedinauth", async (req, res) => {
   const authname = "linkedin";
@@ -349,7 +292,6 @@ app.get("/linkedinauth", async (req, res) => {
         .identifier;
     // Check if the user already exists in the database
     const user = await User.find({ authname }).findOne({ email }).exec();
-    console.log("USerDetails: " + firstName + lastName + email + profilePic);
     if (user) {
       jwt.sign(
         {
@@ -363,7 +305,6 @@ app.get("/linkedinauth", async (req, res) => {
         (err, token) => {
           if (err) throw err;
           res.cookie("token", token).json("ok");
-          console.log(token);
         }
       );
     } else {
@@ -398,18 +339,14 @@ app.get("/linkedinauth", async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
     res.send(error);
   }
 });
 
 app.get("/profile", (req, res) => {
   const { token } = req.cookies;
-  console.log(token);
   jwt.verify(token, secret, {}, (err, info) => {
     if (err) throw err;
-    console.log(info);
-    console.log("successful");
     res.json(info);
   });
 });
@@ -418,21 +355,6 @@ app.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.send("Cooke Cleared");
 });
-
-// app.post("/newpost", uploadMiddleware.single("file"), async (req, res) => {
-//   const { originalname, path } = req.file;
-//   const parts = originalname.split(".");
-//   const ext = parts[parts.length - 1];
-//   const newPath = path + "." + ext;
-//   fs.renameSync(path, newPath);
-
-//   const { userpost } = req.body;
-//   const postDoc = await Post.create({
-//     userpost,
-//     img: newPath,
-//   });
-//   res.json(postDoc);
-// });
 
 app.post("/newpost", async (req, res) => {
   const { title, desc, categ, authorname, authorpic, image } = req.body;
@@ -447,9 +369,7 @@ app.post("/newpost", async (req, res) => {
     });
     postDoc.save();
     res.json(postDoc);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 });
 
 app.get("/getpost", async (req, res) => {
@@ -486,6 +406,14 @@ app.post("/newevent", async (req, res) => {
     usereventcategory,
   });
   res.json(eventDoc);
+});
+app.post("/newquote", async (req, res) => {
+  const { quote, author } = req.body;
+  const quoteDoc = Quote.create({
+    quote: quote,
+    author: author,
+  });
+  res.json(quoteDoc);
 });
 app.post("/newregister", async (req, res) => {
   const { eid, uid } = req.body;
@@ -543,8 +471,20 @@ app.post("/checklike", async (req, res) => {
 app.get("/getevent", async (req, res) => {
   res.json(await Events.find());
 });
+app.get("/getquote", async (req, res) => {
+  res.json(await Quote.find());
+});
 
-// populate should be add or can use cookies
+app.get("/search", async (req, res) => {
+  const title = req.query.key
+    ? {
+        usereventname: { $regex: req.query.key, $options: "i" },
+      }
+    : {};
+  const searchDoc = await Events.find(title);
+  res.json(searchDoc);
+});
+
 app.get("/newevent/:id", async (req, res) => {
   const { id } = req.params;
   const eventDoc = await Events.findById(id);
@@ -554,12 +494,3 @@ app.get("/newevent/:id", async (req, res) => {
 app.listen(4000, function () {
   console.log("listening on port 4000!");
 });
-
-// app.use(cookieParser(), function(req, res, next) {
-//   let token = req.cookies.myCookieName;
-//   if (token && verify(token)) {
-//       next();
-//   } else {
-//       res.redirect('/login');
-//   }
-// });

@@ -14,19 +14,13 @@ import CreateEventDrawer from "./CreateEventDrawer";
 import CreatePostDrawer from "./CreatePostDrawer";
 export default function AddButtonModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  function handelnewpost() {
-    window.location.href = "/createpost";
-  }
-  function handelnewevent() {
-    window.location.href = "/addevent";
-  }
   return (
     <>
       <Button
         mr={5}
         onClick={onOpen}
         w={"250px"}
-        rightIcon={<BiPlus />} //Getting Error for this line
+        rightIcon={<BiPlus />}
         colorScheme="green"
         variant="solid"
       >
@@ -44,13 +38,6 @@ export default function AddButtonModal() {
               <CreateEventDrawer />
             </Stack>
           </ModalBody>
-
-          {/* <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter> */}
         </ModalContent>
       </Modal>
     </>

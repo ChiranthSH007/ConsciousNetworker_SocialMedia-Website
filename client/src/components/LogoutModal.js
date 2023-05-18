@@ -3,7 +3,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   Button,
   ModalCloseButton,
@@ -25,7 +24,6 @@ export default function LogoutModaal() {
         })
         .then((response) => {
           if (response.data != null) {
-            console.log(response.data.uname);
             setUserpic(response.data.upic);
           }
         });

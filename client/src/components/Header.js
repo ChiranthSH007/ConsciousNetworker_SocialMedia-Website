@@ -10,15 +10,9 @@ import {
   useBreakpointValue,
   Stack,
   Image,
-  useDisclosure,
-  Input,
-  InputGroup,
-  InputRightElement,
 } from "@chakra-ui/react";
-import { BiPlug, BiPlus, BiSearch } from "react-icons/bi";
 import AddButtonModal from "./AddButtonModal";
 import LogoutModaal from "./LogoutModal";
-import { Navigate } from "react-router-dom";
 
 export default function Header() {
   const isDesktop = useBreakpointValue({ base: false, lg: true });
@@ -32,8 +26,6 @@ export default function Header() {
         })
         .then((response) => {
           if (response.data != null) {
-            console.log(response.data.uname);
-            // setUserpic(response.data.upic);
             setUserstate(true);
           }
         });
@@ -51,11 +43,8 @@ export default function Header() {
   function EventsRoute() {
     window.location.href = "/events";
   }
-  // function GroupsRoute() {
-  //   window.location.href = "/events";
-  // }
   function AboutUsRoute() {
-    window.location.href = "/events";
+    window.location.href = "/aboutus";
   }
 
   return (
@@ -82,7 +71,6 @@ export default function Header() {
         {isDesktop ? (
           <Flex justify="space-between" flex="1">
             <ButtonGroup variant="link" spacing="8">
-              {/* {["Home", "Events", "Groups", "AboutUs"].map((item) => ( */}
               <Button
                 key={"Home"}
                 color="gray.800"
@@ -100,14 +88,6 @@ export default function Header() {
                 Events
               </Button>
               <Button
-                key={"Groups"}
-                color="gray.800"
-                _hover={{ color: "green" }}
-                onClick={HomeRoute}
-              >
-                Groups
-              </Button>
-              <Button
                 key={"AboutUs"}
                 color="gray.800"
                 _hover={{ color: "green" }}
@@ -118,22 +98,6 @@ export default function Header() {
             </ButtonGroup>
             {userState ? (
               <HStack>
-                <InputGroup>
-                  <Input
-                    variant="filled"
-                    focusBorderColor="green.300"
-                    placeholder="Search"
-                    rounded={"full"}
-                  />
-                  <InputRightElement>
-                    <IconButton
-                      icon={<BiSearch />}
-                      rounded={"full"}
-                      bgColor={"green.500"}
-                      color={"white"}
-                    />
-                  </InputRightElement>
-                </InputGroup>
                 <AddButtonModal />
                 <LogoutModaal />
               </HStack>

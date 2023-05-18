@@ -2,35 +2,20 @@ import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-import { SiFacebook, SiGithub, SiLinkedin } from "react-icons/si";
-import {
-  Box,
-  Button,
-  Center,
-  Grid,
-  Image,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { SiFacebook, SiGithub, SiGoogle, SiLinkedin } from "react-icons/si";
+import { Box, Button, Center, Image, Stack, Text } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
 export default function AuthPage() {
   const toast = useToast();
-  const [user, setUser] = useState({}); //make it to global when need to use it ouside
   const [redirect, setRedirect] = useState(false);
   const CLIENT_ID = "daf0a114d4dac5dc9a75";
   const client_id = "86a0mhak6rvp60";
-  const client_secret = "GQb2YUCnx7OfSPzT";
-  const accessToken =
-    "AQWfhGIYSpqJb-E5HEzc4jZFQwBOsTKCtQBEbzZYaRBwSxIYTrQzN1g5Y_GUrZckScilbtFAIP1lDxYj0ugjZYRS62waZNJVaj1NiV2gkEh3GR4VHHUiFB64jl51bFEJw6bb1YfMtryGXtlr8yxsCrWFaosNSg60sED9JxmYmvv4OmHovb3llYAC9e5YeC7BM7gtt8An0oDRGGkaET9l-5MnYl4FcbRwa0b2Mt422IlLjP-MnBWHlUwAITD3ceyul9UxMij5wkembPAZ4I19BIbGg2jqp5nqcDRVumTdjGqVSEwM00VI8YwBrXCEQGy4UPeWmdKPnMH0QHnUtWkppkewsJ9ghg";
+  let googleButtonWrapper;
 
   async function handleCallbackResponse(response) {
-    console.log("Encoded JWT ID Token: " + response.credential);
     var userObject = jwt_decode(response.credential);
-    console.log(userObject);
-    setUser(userObject);
-    document.getElementById("googlesigninDiv").hidden = true;
     axios
       .post(
         "http://localhost:4000/googleauth",
@@ -40,7 +25,6 @@ export default function AuthPage() {
         } //send data to server on 4000 port
       )
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           setRedirect(true);
         } else {
@@ -57,25 +41,39 @@ export default function AuthPage() {
     google.accounts.id.initialize({
       client_id:
         "114967761590-cnoplbn3sqo1art2auetnuffsbeglloe.apps.googleusercontent.com",
+      ux_mode: "popup",
       callback: handleCallbackResponse,
     });
+    google.accounts.id.prompt();
 
-    google.accounts.id.renderButton(
-      document.getElementById("googlesigninDiv"),
-      {
-        theme: "filled_blue",
-        width: "500px",
-      }
-    );
+    const createFakeGoogleWrapper = () => {
+      const googleLoginWrapper = document.createElement("div");
+      googleLoginWrapper.style.display = "none";
+      googleLoginWrapper.classList.add("custom-google-button");
 
-    // google.accounts.id.prompt();
+      document.body.appendChild(googleLoginWrapper);
+
+      google.accounts.id.renderButton(googleLoginWrapper, {
+        type: "icon",
+        width: "200",
+      });
+
+      const googleLoginWrapperButton =
+        googleLoginWrapper.querySelector("div[role=button]");
+
+      return {
+        click: () => {
+          googleLoginWrapperButton.click();
+        },
+      };
+    };
+    googleButtonWrapper = createFakeGoogleWrapper();
 
     //Github OAuth Code
     //if code param exists just call getGitAccessTokenUserdata
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const codeParam = urlParams.get("code");
-    console.log(codeParam);
 
     if (codeParam) {
       async function getAccessToken() {
@@ -87,7 +85,6 @@ export default function AuthPage() {
             }
           )
           .then((response) => {
-            console.log(response);
             if (response.status === 200) {
               toast({
                 title: "Account created.",
@@ -103,19 +100,18 @@ export default function AuthPage() {
               alert("GitHub Something went wrong");
             }
           })
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch((err) => {});
       }
       getAccessToken();
     }
   }, []);
-
+  function handleGoogleLogin() {
+    googleButtonWrapper.click();
+  }
   if (redirect) {
     return <Navigate to={"/pagefeed"} />;
   }
   const responseFacebook = (response) => {
-    console.log(response);
     axios
       .post(
         "http://localhost:4000/facebookauth",
@@ -125,7 +121,6 @@ export default function AuthPage() {
         } //send data to server on 4000 port
       )
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           setRedirect(true);
         } else {
@@ -145,7 +140,6 @@ export default function AuthPage() {
     await axios
       .get("http://localhost:4000/linkedinauth")
       .then((response) => {
-        console.log(response);
         window.location.href = authUrl;
       })
       .catch((err) => {
@@ -162,10 +156,19 @@ export default function AuthPage() {
     window.location.href = "/";
   }
   return (
-    <Box>
+    <Box
+      backgroundImage={"./loginback.jpg"}
+      height={"920px"}
+      bgRepeat={"no-repeat"}
+      backgroundSize={"cover"}
+    >
       <Center>
-        <Grid templateColumns="repeat(5, 1fr)" gap={3}></Grid>
-        <Stack direction={"column"} pt={"50px"} align={"center"}>
+        <Stack
+          direction={"column"}
+          align={"center"}
+          marginTop={"30px"}
+          spacing={"150px"}
+        >
           <Image
             onClick={HomeRoute}
             src="./logonameblack.png"
@@ -173,71 +176,69 @@ export default function AuthPage() {
             w={"200px"}
             alt="logo_image"
           ></Image>
-          <Stack
-            direction={"row"}
-            pt={"100px"}
-            pr={"100px"}
-            align={"center"}
-            spacing={700}
-          >
-            <Image
-              m={"auto"}
-              src="./undraw_secure_login_pdn4.png"
-              h={"450px"}
-              w={"520px"}
-              alt="logo_image"
-            ></Image>
-            boxShadow={"2xl"}
-            <Box
-              w={"500px"}
-              bgColor={"#3f3d56"}
-              h={"400px"}
-              rounded={"lg"}
-              boxShadow={"2xl"}
-            >
-              <Stack direction={"column"} p={"30px"} spacing={50}>
-                <Text fontWeight={"bold"} fontSize={"30px"} color={"white"}>
-                  Login/SignUp
-                </Text>
-                <Stack spacing={2} align={"center"} w={"full"}>
-                  <div id="googlesigninDiv" className="googleButton"></div>
+  
 
-                  <Button
-                    w={"400px"}
-                    onClick={loginwithGithub}
-                    colorScheme={"gray"}
-                    leftIcon={<SiGithub />}
-                  >
-                    <Text>Github</Text>
-                  </Button>
-                  <Button
-                    w={"400px"}
-                    onClick={LoginwithLinkedin}
-                    colorScheme={"blue"}
-                    leftIcon={<SiLinkedin />}
-                  >
-                    <Text>LinkedIn</Text>
-                  </Button>
-                  <FacebookLogin
-                    appId="603052405152675"
-                    autoLoad={true}
-                    fields="name,email,picture"
-                    callback={responseFacebook}
-                    render={(renderProps) => (
-                      <Button
-                        w={"400px"}
-                        colorScheme={"blue"}
-                        onClick={renderProps.onClick}
-                        leftIcon={<SiFacebook />}
-                      >
-                        <Text>Facebook</Text>
-                      </Button>
-                    )}
-                  />
-                </Stack>
+          <Box
+            w={"500px"}
+            bgColor={"white"}
+            h={"400px"}
+            rounded={"lg"}
+            boxShadow={"2xl"}
+          >
+            <Stack
+              direction={"column"}
+              p={"30px"}
+              spacing={50}
+              align={"center"}
+            >
+              <Text fontWeight={"bold"} fontSize={"33px"} color={"green.600"}>
+                Login/SignUp
+              </Text>
+              <Stack spacing={2} align={"center"} w={"full"}>
+                <Button
+                  w={"400px"}
+                  onClick={handleGoogleLogin}
+                  colorScheme={"messenger"}
+                  leftIcon={<SiGoogle />}
+                >
+                  <Text color={"white"}>Google</Text>
+                </Button>
+
+                <Button
+                  w={"400px"}
+                  onClick={loginwithGithub}
+                  colorScheme={"blackAlpha"}
+                  leftIcon={<SiGithub color="black" />}
+                >
+                  <Text color={"black"}>Github</Text>
+                </Button>
+                <Button
+                  w={"400px"}
+                  onClick={LoginwithLinkedin}
+                  colorScheme={"linkedin"}
+                  leftIcon={<SiLinkedin />}
+                >
+                  <Text>LinkedIn</Text>
+                </Button>
+                <FacebookLogin
+                  appId="603052405152675"
+                  autoLoad={true}
+                  fields="name,email,picture"
+                  callback={responseFacebook}
+                  render={(renderProps) => (
+                    <Button
+                      w={"400px"}
+                      colorScheme={"facebook"}
+                      onClick={renderProps.onClick}
+                      leftIcon={<SiFacebook />}
+                    >
+                      <Text>Facebook</Text>
+                    </Button>
+                  )}
+                />
               </Stack>
-            </Box>
-          </Stack>
+            </Stack>
+          </Box>
         </Stack>
       </Center>
     </Box>

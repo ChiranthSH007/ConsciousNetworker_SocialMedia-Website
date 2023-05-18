@@ -15,7 +15,6 @@ export default function EventPage() {
           withCredentials: true,
         })
         .then((response) => {
-          console.log(response.data.uname);
           setUid(response.data.id);
         })
         .catch((err) => {
@@ -26,7 +25,6 @@ export default function EventPage() {
     fetch("http://localhost:4000/getevent").then((response) => {
       response.json().then((Event) => {
         getEvent(Event);
-        console.log(Event);
       });
     });
   }, []);

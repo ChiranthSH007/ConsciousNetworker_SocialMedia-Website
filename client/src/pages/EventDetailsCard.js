@@ -18,11 +18,12 @@ export default function ShowEventDetails() {
   const { id } = useParams();
   const [eventInfo, seteventInfo] = useState(null);
   const toast = useToast();
+  const [uid, setUid] = useState(null);
+  const [regStatus, setRegStatus] = useState(null);
 
   const showtoast = () => {
     toast({
       title: "You have successfully registered for this event",
-      //description: "We've created your account for you.",
       status: "success",
       duration: 1500,
       isClosable: true,
@@ -35,20 +36,50 @@ export default function ShowEventDetails() {
           withCredentials: true,
         })
         .then((response) => {
-          //setUid(response.data.id);
+          setUid(response.data.id);
         })
         .catch((err) => {
           window.location.href = "/auth";
         });
     }
+    async function checkReg() {
+      await axios
+        .post("http://localhost:4000/checkreg", {
+          eid: id,
+          uid: uid,
+        })
+        .then((response) => {
+          if (response.data != null) {
+            setRegStatus(true);
+          } else {
+            setRegStatus(false);
+          }
+        });
+    }
     fetchData();
-    //console.log(id);
+
+    checkReg();
     fetch(`http://localhost:4000/newevent/${id}`).then((response) => {
       response.json().then((eventInfo) => {
         seteventInfo(eventInfo);
       });
     });
   }, []);
+
+  async function regitserNewUser() {
+    await axios
+      .post("http://localhost:4000/newregister", { eid: id, uid: uid })
+      .then((response) => {
+        if (response.status === 200) {
+          showtoast();
+          window.location.href = "/events";
+        } else {
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   if (!eventInfo) return "";
 
@@ -68,20 +99,29 @@ export default function ShowEventDetails() {
             marginLeft="20px"
             marginTop={"2%"}
             marginRight="20px"
-            // src={`http://localhost:4000/${eventInfo.eventimg}`}
             src={eventInfo.eventimg}
             alt="Chakra UI"
           />
 
-          <Card w={"500px"} marginTop="3%" boxShadow={"md"}>
+          <Card w={"500px"} marginTop="3%" boxShadow={"md"} overflowY="auto">
             <CardHeader className="eventdetailsname">
               <div>
                 <Heading size="md">{eventInfo.usereventname}</Heading>
               </div>
               <div style={{ marginLeft: "auto" }}>
-                <Button onClick={showtoast} colorScheme={"green"}>
-                  Register
-                </Button>
+                {regStatus ? (
+                  <Button
+                    variant="outline"
+                    color={"black"}
+                    borderColor={"green"}
+                  >
+                    Registered
+                  </Button>
+                ) : (
+                  <Button colorScheme={"green"} onClick={regitserNewUser}>
+                    Register
+                  </Button>
+                )}
               </div>
             </CardHeader>
 

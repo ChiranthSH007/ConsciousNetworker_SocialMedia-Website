@@ -4,14 +4,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function EventTile({
-  index,
   usereventname,
-  usereventdescription,
   usereventlocation,
   usereventtime,
-  eventimg,
-  usereventorgname,
-  usereventorggmail,
   usereventcategory,
   _id,
   uid,
@@ -27,8 +22,6 @@ export default function EventTile({
         })
         .then((response) => {
           if (response.data != null) {
-            // console.log("CheckRegistration Response" + response.data);
-            console.log("times");
             setRegStatus(true);
           } else {
             setRegStatus(false);
@@ -56,21 +49,19 @@ export default function EventTile({
     >
       <Stack direction={"row"}>
         <Box
-          mr={"10px"}
+          mr={"5px"}
           h={"60px"}
-          w={"50px"}
+          minWidth={"50px"}
           bg={"green.500"}
           rounded={"md"}
           align={"center"}
         >
-          <Stack direction={"column"} spacing={0} p={"5px"}>
-            <Text fontWeight={"bold"} color={"white"}>
-              30
-            </Text>
-            <Text fontWeight={"bold"} color={"white"}>
-              MAR
-            </Text>
-          </Stack>
+          <Text fontWeight={"bold"} color={"white"}>
+            {new Date(usereventtime).toLocaleString([], {
+              month: "short",
+              day: "numeric",
+            })}
+          </Text>
         </Box>
         <Stack direction={"column"} w={"100%"}>
           <Stack direction={"row"} justify={"space-between"} align={"center"}>

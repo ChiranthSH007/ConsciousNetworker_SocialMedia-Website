@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { BiLike, BiComment, BiShareAlt } from "react-icons/bi";
+import { BiLike, BiShareAlt } from "react-icons/bi";
 
 export default function Post({
   _id,
@@ -39,8 +39,6 @@ export default function Post({
         })
         .then((response) => {
           if (response.data != null) {
-            // console.log("CheckRegistration Response" + response.data);
-            console.log("times");
             setLikeStatus(true);
           } else {
             setLikeStatus(false);
@@ -54,9 +52,7 @@ export default function Post({
     await axios
       .post("http://localhost:4000/likedislike", { pid: _id, uid: uid })
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
-          console.log("Liked");
         } else {
         }
       })
@@ -116,15 +112,6 @@ export default function Post({
             <Box w={"100%"} paddingStart={10}>
               <Flex gap={24} direction={"column"} w={"100%"}>
                 <Stack h={"80%"}>
-                  {/* <Text
-                    color={"green.500"}
-                    textTransform={"uppercase"}
-                    fontWeight={800}
-                    fontSize={"sm"}
-                    letterSpacing={1.1}
-                  >
-                    Category
-                  </Text> */}
                   <Badge colorScheme="green" width={"min-content"}>
                     {category}
                   </Badge>
@@ -167,10 +154,7 @@ export default function Post({
                       ></IconButton>
                     )}
 
-                    {/* <IconButton
-                      icon={<BiComment />}
-                      position={"-moz-initial"}
-                    ></IconButton> */}
+         
                     <IconButton
                       icon={<BiShareAlt />}
                       onClick={copy}
@@ -184,13 +168,5 @@ export default function Post({
         </Box>
       </Center>
     </>
-    // <div className="posts">
-    //   <div className="image">
-    //     <img src={"http://localhost:4000/" + img} alt="reload"></img>
-    //   </div>
-    //   <div className="postdescription">{userpost}</div>
-    //   <br />
-    //   <br />
-    // </div>
   );
 }
